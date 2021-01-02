@@ -98,6 +98,34 @@ class MinString {
 	}
 
 	/**
+	 * Convert from base 64 back to decimal.
+	 */
+	public function to_decimal() {
+		$input  = $this->string;
+		$length = strlen( $input );
+		$output = array();
+		for ( $i = 0; $i <= $length; $i += 4 ) {
+			$str    = substr( $input, $i, 4 );
+			$to     = strlen( $str );
+			$number = 0;
+			for ( $j = 0; $j < $to; ++ $j ) {
+				$number = 64 * $number + strpos( $this->base_64_symbols, $str[ $j ] );
+			}
+			$first   = $number >> 16;
+			$number -= $first << 16;
+			$second  = $number >> 8;
+			$number -= $second << 8;
+			$output  = array_merge( $output, array( $number, $second, $first ) );
+		}
+		$count = count( $output );
+		while ( 0 === $output[ $count - 1 ] ) {
+			array_pop( $output );
+			-- $count;
+		}
+		$this->string = implode( ',', $output );
+	}
+
+	/**
 	 * Counter repeat instances of characters and reduce
 	 */
 	public function counter() {
@@ -130,6 +158,31 @@ class MinString {
 	}
 
 	/**
+	 * Reverse the effect of calling counter
+	 */
+	public function decounter() {
+		$symbols    = $this->counter_symbols;
+		$output     = '';
+		$characters = str_split( $this->string );
+		foreach ( $characters as $c ) {
+			$index = strpos( $symbols, $c );
+
+			if ( false !== $index ) {
+				++ $index;
+				for ( $i = 0; $i <= $index; ++ $i ) {
+					$output .= $previous;
+				}
+			} else {
+				$output .= $c;
+			}
+
+			$previous = $c;
+		}
+
+		$this->string = $output;
+	}
+
+	/**
 	 * Add previous character to output.
 	 *
 	 * @param string $previous the previous character value.
@@ -156,10 +209,24 @@ class MinString {
 	}
 
 	/**
+	 * Reverse the effect of two_most_common_patterns
+	 */
+	public function unsub_two_most_common_patterns() {
+		$this->string = str_replace( array( '@', '=' ), array( '00', '$$' ), $this->string );
+	}
+
+	/**
 	 * Replace the third most common pattern
 	 */
 	public function third_most_common_pattern() {
 		$this->string = str_replace( '0^', "'", $this->string );
+	}
+
+	/**
+	 * Reverse the effect of third_most_common_pattern
+	 */
+	public function unsub_third_most_common_pattern() {
+		$this->string = str_replace( "'", '0^', $this->string );
 	}
 
 	/**
@@ -185,6 +252,18 @@ class MinString {
 	 */
 	private function get_three_character_patterns() {
 		return array( '3$0', 'Y0$', 'M0*', '!f$', '@20', '080', '0Y0', '0f0', '$`$', '3w0', 'fYf', '0fU', '"23', 'c01', 'Y07', '0fY', '!3$', '020', '3M3', 'Y@f', '0fM', '$"3', '$^Y', '640', '030', '1Y0', '1M0', 'Yf=', '@3w', '0c0', '"22', '0M0', '$3$', '!$^', '3$v', '0g0', 'o\'o', 'M3"', '"1M', 'f$^', 'M3M', '0s0', '0v0', '@80', '$*"', '03"' );
+	}
+
+	/**
+	 * Reverse the effect of get_three_character_patterns
+	 */
+	public function unsub_common_three_character_patterns() {
+		$patterns = $this->get_three_character_patterns();
+		$input    = $this->string;
+		for ( $index = count( $patterns ) - 1; $index >= 0; -- $index ) {
+			$input = str_replace( '"' . $this->base_64_symbols[ $index ], $patterns[ $index ], $input );
+		}
+		$this->string = $input;
 	}
 
 	/**
@@ -283,6 +362,51 @@ class MinString {
 	}
 
 	/**
+	 * Reverse the effect of common_special_patterns
+	 */
+	public function unsub_common_special_patterns() {
+		$input           = $this->string;
+		$input_length    = strlen( $input );
+		$patterns        = $this->get_three_character_patterns();
+		$other_patterns  = $this->get_other_patterns();
+		$patterns_length = count( $patterns );
+
+		for ( $index = count( $other_patterns ) - 1; $index >= 0; -- $index ) {
+			$character_index = $patterns_length + $index;
+			$character       = $this->char_at( $character_index );
+			$search          = '"' . $character;
+
+			if ( false !== strpos( $input, $search ) ) {
+				$unsubbed_string = '';
+				$to              = strlen( $input );
+				for ( $string_index = 0; $string_index < $to; ++ $string_index ) {
+					if ( $string_index + 1 < $input_length && '"' === $input[ $string_index ] && $character === $input[ $string_index + 1 ] ) {
+						$pattern        = $other_patterns[ $index ];
+						$pattern_length = strlen( $pattern );
+						$i              = 2;
+						for ( $j = 0; $j < $pattern_length; ++ $j ) {
+							if ( ' ' !== $pattern[ $j ] ) {
+								$unsubbed_string .= $pattern[ $j ];
+							} else {
+								$unsubbed_string .= $input[ $string_index + $i ];
+								++ $i;
+							}
+						}
+
+						$string_index += $pattern_length - 2;
+					} else {
+						$unsubbed_string .= $input[ $string_index ];
+					}
+				}
+
+				$input = $unsubbed_string;
+			}
+		}
+
+		$this->string = $input;
+	}
+
+	/**
 	 * Replace the top two patterns
 	 */
 	public function top_two_patterns() {
@@ -330,6 +454,31 @@ class MinString {
 		}
 
 		return "$top";
+	}
+
+	/**
+	 * Reverse the ffect of calling top_two_patterns
+	 */
+	public function unsub_top_two_patterns() {
+		$this->unsub_pattern( ':' );
+		$this->unsub_pattern( ';' );
+	}
+
+	/**
+	 * Reverse the effect of sub_top_pattern
+	 *
+	 * @param string $character we're replacing back.
+	 */
+	private function unsub_pattern( $character ) {
+		$input       = $this->string;
+		$first_index = strpos( $input, $character );
+		if ( false === $first_index ) {
+			return;
+		}
+		$pattern      = $input[ $first_index + 1 ] . $input[ $first_index + 2 ];
+		$input        = str_replace( $character . $pattern, $pattern, $input );
+		$input        = str_replace( $character, $pattern, $input );
+		$this->string = $input;
 	}
 
 	/**
@@ -438,6 +587,31 @@ class MinString {
 	}
 
 	/**
+	 * Reverse the effect of three_character_permutations
+	 */
+	public function unsub_three_character_permutations() {
+		$input       = $this->string;
+		$symbols     = $this->three_character_permutations_symbols;
+		$first_index = strpos( $input, $symbols[0] );
+
+		if ( false === $first_index ) {
+			return $input;
+		}
+
+		$pattern   = substr( $input, $first_index + 1, 3 );
+		$result    = substr( $input, 0, $first_index ) . $pattern;
+		$remaining = substr( $input, $first_index + 4 );
+		for ( $rule_index = 5; $rule_index >= 0; -- $rule_index ) {
+			$check = $symbols[ $rule_index ];
+			if ( false !== strpos( $remaining, $check ) ) {
+				$remaining = str_replace( $check, $this->rule_adjustment( $pattern, $rule_index ), $remaining );
+			}
+		}
+
+		$this->string = $result . $remaining;
+	}
+
+	/**
 	 * Replace two character permutations
 	 */
 	public function two_character_permutations() {
@@ -507,12 +681,86 @@ class MinString {
 					break;
 
 				case 2:
-					$remaining = preg_replace( '/(' . addslashes( $top[0] ) . ')(.{1})(' . addslashes( $top[1] ) . ')/', $c . '$2', $remaining );
+					$remaining = preg_replace( '/(' . preg_quote( $top[0] ) . ')(.{1})(' . preg_quote( $top[1] ) . ')/', $c . '${2}', $remaining );
 					break;
 
 				case 3:
-					$remaining = preg_replace( '/(' . addslashes( $top[1] ) . ')(.{1})(' . addslashes( $top[0] ) . ')/', $c . '$2', $remaining );
+					$remaining = preg_replace( '/(' . preg_quote( $top[1] ) . ')(.{1})(' . preg_quote( $top[0] ) . ')/', $c . '${2}', $remaining );
 					break;
+			}
+		}
+
+		$this->string = $result . $remaining;
+	}
+
+	/**
+	 * Reverse the effect of two_character_permutations
+	 */
+	public function unsub_two_character_permutations() {
+		$input   = $this->string;
+		$symbols = $this->two_character_permutations_symbols;
+		$length  = strlen( $symbols );
+
+		$first_index = -1;
+		for ( $rule_index = 0; $rule_index < $length; ++ $rule_index ) {
+			$index = strpos( $input, $symbols[ $rule_index ] );
+			if ( false !== $index && ( -1 === $first_index || $index < $first_index ) ) {
+				$first_index     = $index;
+				$first_character = $symbols[ $rule_index ];
+			}
+		}
+
+		if ( -1 === $first_index ) {
+			return;
+		}
+
+		$trailing = substr( $input, $first_index + 1, 3 );
+		$result   = substr( $input, 0, $first_index );
+
+		switch ( $first_character ) {
+			case $symbols[0]:
+				$characters = $trailing[0] . $trailing[1];
+				$result    .= substr( $trailing, 0, 2 );
+				$step       = 3;
+				break;
+
+			case $symbols[2]:
+				$characters = $trailing[0] . $trailing[2];
+				$result    .= $trailing;
+				$step       = 4;
+				break;
+		}
+
+		$remaining = substr( $input, $first_index + $step );
+		for ( $char_index = $length - 1; $char_index >= 0; -- $char_index ) {
+			$c = $symbols[ $char_index ];
+
+			if ( false !== strpos( $remaining, $c ) ) {
+				switch ( $char_index ) {
+					case 0:
+						$comparison = $c;
+						$replace    = $characters;
+						$remaining  = str_replace( $comparison, $replace, $remaining );
+						break;
+
+					case 1:
+						$comparison = $c;
+						$replace    = $characters[1] . $characters[0];
+						$remaining  = str_replace( $comparison, $replace, $remaining );
+						break;
+
+					case 2:
+						$comparison = '(' . preg_quote( $c ) . ')(.{1})';
+						$replace    = $characters[0] . '${2}' . $characters[1];
+						$remaining  = preg_replace( "/$comparison/", $replace, $remaining );
+						break;
+
+					case 3:
+						$comparison = '(' . preg_quote( $c ) . ')(.{1})';
+						$replace    = $characters[1] . '${2}' . $characters[0];
+						$remaining  = preg_replace( "/$comparison/", $replace, $remaining );
+						break;
+				}
 			}
 		}
 
@@ -532,5 +780,20 @@ class MinString {
 		$this->top_two_patterns();
 		$this->three_character_permutations();
 		$this->two_character_permutations();
+	}
+
+	/**
+	 * Run all decompression functions in orders to reverse the effect of compress.
+	 */
+	public function decompress() {
+		$this->unsub_two_character_permutations();
+		$this->unsub_three_character_permutations();
+		$this->unsub_top_two_patterns();
+		$this->unsub_common_special_patterns();
+		$this->unsub_common_three_character_patterns();
+		$this->unsub_third_most_common_pattern();
+		$this->unsub_two_most_common_patterns();
+		$this->decounter();
+		$this->to_decimal();
 	}
 }

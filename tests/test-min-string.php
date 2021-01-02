@@ -44,6 +44,13 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
+	 * Test MinString::to_decimal
+	 */
+	public function test_to_decimal() {
+		$this->assert_before_and_after( $this->get_expected_base_64_value(), 'to_decimal', $this->get_raw_value() );
+	}
+
+	/**
 	 * Test MinString::counter
 	 */
 	public function test_counter() {
@@ -57,6 +64,13 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 	 */
 	private function get_expected_counter_value() {
 		return '030r0~v0-81$0g0^fz$1M0^fX$7M0^f$$vM0^f$^M0^f$^TY00f$*Y00fX$^Y13fP$^Y34!3$^Z$8g3Y$*gg3!$*wg3!$*3M3!$*203!$$Z$403$^Z$403$$TY!803$$XYt883!w6Y9043c06I1001C06820^z04o40^x08g0080g00w1080*w00400';
+	}
+
+	/**
+	 * Test MinString::decounter
+	 */
+	public function test_decounter() {
+		$this->assert_before_and_after( $this->get_expected_counter_value(), 'decounter', $this->get_expected_base_64_value() );
 	}
 
 	/**
@@ -76,6 +90,13 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
+	 * Test MinString::unsub_two_most_common_patterns
+	 */
+	public function test_unsub_two_most_common_patterns() {
+		$this->assert_before_and_after( $this->get_expected_two_most_common_patterns_value(), 'unsub_two_most_common_patterns', $this->get_expected_counter_value() );
+	}
+
+	/**
 	 * Test MinString::third_most_common_pattern
 	 */
 	public function test_third_most_common_pattern() {
@@ -89,6 +110,13 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 	 */
 	private function get_expected_third_most_common_pattern_value() {
 		return "030r0~v0-81$0g'fz$1M'fX$7M'f=vM'f$^M'f$^TY@f$*Y@fX$^Y13fP$^Y34!3$^Z$8g3Y$*gg3!$*wg3!$*3M3!$*203!=Z$403$^Z$403=TY!803=XYt883!w6Y9043c06I1@1C0682'z04o4'x08g@80g@w1080*w@4@";
+	}
+
+	/**
+	 * Test MinString::unsub_third_most_common_pattern
+	 */
+	public function test_unsub_third_most_common_pattern() {
+		$this->assert_before_and_after( $this->get_expected_third_most_common_pattern_value(), 'unsub_third_most_common_pattern', $this->get_expected_two_most_common_patterns_value() );
 	}
 
 	/**
@@ -108,9 +136,14 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
+	 * Test MinString::unsub_common_three_character_patterns
+	 */
+	public function test_unsub_common_three_character_patterns() {
+		$this->assert_before_and_after( $this->get_expected_common_three_character_patterns_value(), 'unsub_common_three_character_patterns', $this->get_expected_third_most_common_pattern_value() );
+	}
+
+	/**
 	 * Test MinString::common_special_patterns
-	 *
-	 * @group mike
 	 */
 	public function test_common_special_patterns() {
 		$this->assert_before_and_after( $this->get_expected_common_three_character_patterns_value(), 'common_special_patterns', $this->get_expected_common_special_patterns_value() );
@@ -123,6 +156,13 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 	 */
 	private function get_expected_common_special_patterns_value() {
 		return '"or0~v0-81$0g\'fz$1M\'fX$7M\'f=v"U\'D\'"DT"j"IjX"m13fP"m34"g^Z$8g3Y$*gg3!$*wg3!"Ii!$*203!=Z$403"*Z403=TY!803=XYt883!w6Y9043c06I1@1C0682\'z04o4\'x08g"Hg@w1"5*w@4@';
+	}
+
+	/**
+	 * Test MinString::unsub_common_special_patterns
+	 */
+	public function test_unsub_common_special_patterns() {
+		$this->assert_before_and_after( $this->get_expected_common_special_patterns_value(), 'unsub_common_special_patterns', $this->get_expected_common_three_character_patterns_value() );
 	}
 
 	/**
@@ -154,6 +194,13 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
+	 * Test MinString::unsub_top_two_patterns
+	 */
+	public function test_unsub_top_two_patterns() {
+		$this->assert_before_and_after( $this->get_expected_top_two_patterns_value(), 'unsub_top_two_patterns', $this->get_expected_common_special_patterns_value() );
+	}
+
+	/**
 	 * Get the expected result when calling top_two_patterns with the Bumblebee data set.
 	 *
 	 * @return string
@@ -179,6 +226,13 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
+	 * Test MinString::unsub_three_character_permutations
+	 */
+	public function test_unsub_three_character_permutations() {
+		$this->assert_before_and_after( $this->get_expected_three_character_permutations_value(), 'unsub_three_character_permutations', $this->get_expected_top_two_patterns_value() );
+	}
+
+	/**
 	 * Test MinString::two_character_permutations
 	 */
 	public function test_two_character_permutations() {
@@ -195,9 +249,23 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
+	 * Test MinString::unsub_two_character_permutations
+	 */
+	public function test_unsub_two_character_permutations() {
+		$this->assert_before_and_after( $this->get_expected_two_character_permutations_value(), 'unsub_two_character_permutations', $this->get_expected_three_character_permutations_value() );
+	}
+
+	/**
 	 * Test MinString::compress
 	 */
 	public function test_compress() {
 		$this->assert_before_and_after( $this->get_raw_value(), 'compress', $this->get_expected_two_character_permutations_value() );
+	}
+
+	/**
+	 * Test MinString::decompress
+	 */
+	public function test_decompress() {
+		$this->assert_before_and_after( $this->get_expected_two_character_permutations_value(), 'decompress', $this->get_raw_value() );
 	}
 }
