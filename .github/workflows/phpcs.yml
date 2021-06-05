@@ -1,6 +1,6 @@
 on: [push]
 
-name: Inspections
+name: Code Styling
 jobs:
   runPHPCSInspection:
     name: Run PHPCS inspection

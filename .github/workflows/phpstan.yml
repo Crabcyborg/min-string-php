@@ -1,5 +1,6 @@
 on: [push]
 
+name: Static Code Analysis
 jobs:
   phpstan:
     name: PHPStan
@@ -13,4 +14,4 @@ jobs:
     - name: PHPStan
       uses: docker://oskarstark/phpstan-ga
       with:
-        args: analyse class-minstring.php
+        args: analyse class-minstring.php --level=max
