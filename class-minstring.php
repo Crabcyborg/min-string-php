@@ -827,7 +827,7 @@ class MinString {
 	}
 
 	/**
-	 * Run all decompression functions in orders to reverse the effect of compress.
+	 * Run all decompression functions in order to reverse the effect of compress.
 	 *
 	 * @return void
 	 */
