@@ -84,7 +84,7 @@ class MinString {
 				++$count;
 			}
 
-			$quotient = $set[0] + ( $set[1] << 8 ) + ( $set[2] << 16 );
+			$quotient = (int) $set[0] + ( (int) $set[1] << 8 ) + ( (int) $set[2] << 16 );
 			$result   = '';
 
 			while ( $quotient ) {

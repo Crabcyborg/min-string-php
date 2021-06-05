@@ -1,6 +1,5 @@
 parameters:
 	ignoreErrors:
-		- '#Binary operation \"<<\" between 0\|string and \d* results in an error.#'
 		- '#Method MinString::char_at\(\) should return string but return statement is missing#'
 		- '#expects array\|string, string\|null given.#'
 		- '#expects int, int<0, max>\|false given#'
