@@ -67,6 +67,8 @@ class MinString {
 
 	/**
 	 * Convert integer array values to base 64 data.
+	 *
+	 * @return void
 	 */
 	public function to_base_64() {
 		$exploded = explode( ',', $this->string );
@@ -99,6 +101,8 @@ class MinString {
 
 	/**
 	 * Convert from base 64 back to decimal.
+	 *
+	 * @return void
 	 */
 	public function to_decimal() {
 		$input  = $this->string;
@@ -127,10 +131,12 @@ class MinString {
 
 	/**
 	 * Counter repeat instances of characters and reduce
+	 *
+	 * @return void
 	 */
 	public function counter() {
 		$symbols    = $this->counter_symbols;
-		$previous   = false;
+		$previous   = '';
 		$count      = 0;
 		$output     = '';
 		$length     = strlen( $symbols );
@@ -159,10 +165,13 @@ class MinString {
 
 	/**
 	 * Reverse the effect of calling counter
+	 *
+	 * @return void
 	 */
 	public function decounter() {
 		$symbols    = $this->counter_symbols;
 		$output     = '';
+		$previous   = '';
 		$characters = str_split( $this->string );
 		foreach ( $characters as $c ) {
 			$index = strpos( $symbols, $c );
@@ -203,6 +212,8 @@ class MinString {
 
 	/**
 	 * Reduce the two most common patterns to single characters
+	 *
+	 * @return void
 	 */
 	public function two_most_common_patterns() {
 		$this->string = str_replace( array( '00', '$$' ), array( '@', '=' ), $this->string );
@@ -210,6 +221,8 @@ class MinString {
 
 	/**
 	 * Reverse the effect of two_most_common_patterns
+	 *
+	 * @return void
 	 */
 	public function unsub_two_most_common_patterns() {
 		$this->string = str_replace( array( '@', '=' ), array( '00', '$$' ), $this->string );
@@ -217,6 +230,8 @@ class MinString {
 
 	/**
 	 * Replace the third most common pattern
+	 *
+	 * @return void
 	 */
 	public function third_most_common_pattern() {
 		$this->string = str_replace( '0^', "'", $this->string );
@@ -224,6 +239,8 @@ class MinString {
 
 	/**
 	 * Reverse the effect of third_most_common_pattern
+	 *
+	 * @return void
 	 */
 	public function unsub_third_most_common_pattern() {
 		$this->string = str_replace( "'", '0^', $this->string );
@@ -231,6 +248,8 @@ class MinString {
 
 	/**
 	 * Replace common three character patterns
+	 *
+	 * @return void
 	 */
 	public function common_three_character_patterns() {
 		$patterns = $this->get_three_character_patterns();
@@ -248,7 +267,7 @@ class MinString {
 	/**
 	 * Get all common three character patterns that we're going to replace.
 	 *
-	 * @return array
+	 * @return array<string>
 	 */
 	private function get_three_character_patterns() {
 		return array( '3$0', 'Y0$', 'M0*', '!f$', '@20', '080', '0Y0', '0f0', '$`$', '3w0', 'fYf', '0fU', '"23', 'c01', 'Y07', '0fY', '!3$', '020', '3M3', 'Y@f', '0fM', '$"3', '$^Y', '640', '030', '1Y0', '1M0', 'Yf=', '@3w', '0c0', '"22', '0M0', '$3$', '!$^', '3$v', '0g0', 'o\'o', 'M3"', '"1M', 'f$^', 'M3M', '0s0', '0v0', '@80', '$*"', '03"' );
@@ -256,6 +275,8 @@ class MinString {
 
 	/**
 	 * Reverse the effect of get_three_character_patterns
+	 *
+	 * @return void
 	 */
 	public function unsub_common_three_character_patterns() {
 		$patterns = $this->get_three_character_patterns();
@@ -268,6 +289,8 @@ class MinString {
 
 	/**
 	 * Replace common special patterns
+	 *
+	 * @return void
 	 */
 	public function common_special_patterns() {
 		$patterns_length       = count( $this->get_three_character_patterns() );
@@ -355,7 +378,7 @@ class MinString {
 	/**
 	 * Get common irregular patterns
 	 *
-	 * @return array
+	 * @return array<string>
 	 */
 	private function get_other_patterns() {
 		return array( '$ $ $', '"  "  "', '$M  $', '01  0', '= $  $', '01  \'', 'M f  0', '0 "  0', '0 "  "', '0  "  0', 'M " M', '3 0 "', 'M  0  "', 'm  q  G', '$  $  f', 'Y $ Y', '"  f  "', '1w0', '0  " "', '$^ $', '1 "V', '1" Y', '" " M', '$M   $', '0  "  "', '" fw' );
@@ -363,6 +386,8 @@ class MinString {
 
 	/**
 	 * Reverse the effect of common_special_patterns
+	 *
+	 * @return void
 	 */
 	public function unsub_common_special_patterns() {
 		$input           = $this->string;
@@ -408,6 +433,8 @@ class MinString {
 
 	/**
 	 * Replace the top two patterns
+	 *
+	 * @return void
 	 */
 	public function top_two_patterns() {
 		$this->sub_top_pattern( ';' );
@@ -418,6 +445,7 @@ class MinString {
 	 * Determine the most frequent appearing pattern in the active string and replace it with the specified $character.
 	 *
 	 * @param string $character the character we're replacing the top pattern with.
+	 * @return void
 	 */
 	public function sub_top_pattern( $character ) {
 		$counts = array();
@@ -441,7 +469,7 @@ class MinString {
 	/**
 	 * Determine from a list of counts by array, which pattern appears the most frequently.
 	 *
-	 * @param array $counts the full array of counts by pattern index.
+	 * @param array<int> $counts the full array of counts by pattern index.
 	 * @return string the pattern with the highest count.
 	 */
 	private function top_pattern( $counts ) {
@@ -458,6 +486,8 @@ class MinString {
 
 	/**
 	 * Reverse the ffect of calling top_two_patterns
+	 *
+	 * @return void
 	 */
 	public function unsub_top_two_patterns() {
 		$this->unsub_pattern( ':' );
@@ -468,6 +498,7 @@ class MinString {
 	 * Reverse the effect of sub_top_pattern
 	 *
 	 * @param string $character we're replacing back.
+	 * @return void
 	 */
 	private function unsub_pattern( $character ) {
 		$input       = $this->string;
@@ -483,6 +514,8 @@ class MinString {
 
 	/**
 	 * Replace three character permutations
+	 *
+	 * @return void
 	 */
 	public function three_character_permutations() {
 		$symbols = $this->three_character_permutations_symbols;
@@ -576,7 +609,7 @@ class MinString {
 	 * Get all permutations for a 3 digit string.
 	 *
 	 * @param string $input the 3 digit string.
-	 * @return array
+	 * @return array<string>
 	 */
 	private function permutations( $input ) {
 		$permutations = array();
@@ -588,6 +621,8 @@ class MinString {
 
 	/**
 	 * Reverse the effect of three_character_permutations
+	 *
+	 * @return void
 	 */
 	public function unsub_three_character_permutations() {
 		$input       = $this->string;
@@ -595,7 +630,7 @@ class MinString {
 		$first_index = strpos( $input, $symbols[0] );
 
 		if ( false === $first_index ) {
-			return $input;
+			return;
 		}
 
 		$pattern   = substr( $input, $first_index + 1, 3 );
@@ -613,6 +648,8 @@ class MinString {
 
 	/**
 	 * Replace two character permutations
+	 *
+	 * @return void
 	 */
 	public function two_character_permutations() {
 		$symbols = $this->two_character_permutations_symbols;
@@ -681,11 +718,11 @@ class MinString {
 					break;
 
 				case 2:
-					$remaining = preg_replace( '/(' . preg_quote( $top[0] ) . ')(.{1})(' . preg_quote( $top[1] ) . ')/', $c . '${2}', $remaining );
+					$remaining = preg_replace( '/(' . preg_quote( $top[0], '/' ) . ')(.{1})(' . preg_quote( $top[1], '/' ) . ')/', $c . '${2}', $remaining );
 					break;
 
 				case 3:
-					$remaining = preg_replace( '/(' . preg_quote( $top[1] ) . ')(.{1})(' . preg_quote( $top[0] ) . ')/', $c . '${2}', $remaining );
+					$remaining = preg_replace( '/(' . preg_quote( $top[1], '/' ) . ')(.{1})(' . preg_quote( $top[0], '/' ) . ')/', $c . '${2}', $remaining );
 					break;
 			}
 		}
@@ -695,6 +732,8 @@ class MinString {
 
 	/**
 	 * Reverse the effect of two_character_permutations
+	 *
+	 * @return void
 	 */
 	public function unsub_two_character_permutations() {
 		$input   = $this->string;
@@ -729,6 +768,9 @@ class MinString {
 				$result    .= $trailing;
 				$step       = 4;
 				break;
+
+			default:
+				return;
 		}
 
 		$remaining = substr( $input, $first_index + $step );
@@ -750,13 +792,13 @@ class MinString {
 						break;
 
 					case 2:
-						$comparison = '(' . preg_quote( $c ) . ')(.{1})';
+						$comparison = '(' . preg_quote( $c, '/' ) . ')(.{1})';
 						$replace    = $characters[0] . '${2}' . $characters[1];
 						$remaining  = preg_replace( "/$comparison/", $replace, $remaining );
 						break;
 
 					case 3:
-						$comparison = '(' . preg_quote( $c ) . ')(.{1})';
+						$comparison = '(' . preg_quote( $c, '/' ) . ')(.{1})';
 						$replace    = $characters[1] . '${2}' . $characters[0];
 						$remaining  = preg_replace( "/$comparison/", $replace, $remaining );
 						break;
@@ -769,6 +811,8 @@ class MinString {
 
 	/**
 	 * Run all compression functions in order.
+	 *
+	 * @return void
 	 */
 	public function compress() {
 		$this->to_base_64();
@@ -784,6 +828,8 @@ class MinString {
 
 	/**
 	 * Run all decompression functions in orders to reverse the effect of compress.
+	 *
+	 * @return void
 	 */
 	public function decompress() {
 		$this->unsub_two_character_permutations();
