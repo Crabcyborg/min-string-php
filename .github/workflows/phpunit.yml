@@ -8,19 +8,15 @@ jobs:
       matrix:
         include:
           - php: 7.4
-            wordpress: master
             phpunit: 6.5.14
 
     name: PHP ${{ matrix.php }}
     steps:
       - uses: actions/checkout@v2
-
-      # get the PHP version
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           tools: phpunit:${{ matrix.phpunit }}
-
-      - name: PhpUnit tests
+      - name: PHPUnit Tests
         run: |
           phpunit
