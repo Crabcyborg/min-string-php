@@ -2,8 +2,6 @@
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Example Project" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
 
 	<exclude-pattern>/vendor/*</exclude-pattern>
-	<exclude-pattern>/node_modules/*</exclude-pattern>
-	<exclude-pattern>*.min.js</exclude-pattern>
 
 	<arg name="extensions" value="php" />
 	<arg value="nsp" />
@@ -17,6 +15,6 @@
 
 	<rule ref="Squiz.Commenting.FileComment.Missing">
 		<exclude-pattern>*</exclude-pattern>
-    </rule>
+	</rule>
 
 </ruleset>
