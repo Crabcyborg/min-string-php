@@ -48,6 +48,20 @@ class MinString {
 	private $string;
 
 	/**
+	 * The active pattern matches found when calling self::update_pattern_meta.
+	 *
+	 * @var array<int> $active_pattern_matches
+	 */
+	private $active_pattern_matches = array();
+
+	/**
+	 * The active pattern count when calling self::update_pattern_meta.
+	 *
+	 * @var int $active_pattern_number
+	 */
+	private $active_pattern_number = 0;
+
+	/**
 	 * MinString constructor method.
 	 *
 	 * @param string $string the raw csv string.
@@ -113,7 +127,11 @@ class MinString {
 			$to     = strlen( $str );
 			$number = 0;
 			for ( $j = 0; $j < $to; ++ $j ) {
-				$number = 64 * $number + strpos( $this->base_64_symbols, $str[ $j ] );
+				$number = 64 * $number;
+				$pos    = strpos( $this->base_64_symbols, $str[ $j ] );
+				if ( is_int( $pos ) ) {
+					$number += $pos;
+				}
 			}
 			$first   = $number >> 16;
 			$number -= $first << 16;
@@ -195,17 +213,14 @@ class MinString {
 	 * Add previous character to output.
 	 *
 	 * @param string $previous the previous character value.
-	 * @param int    $count the repeated count fount for the previous character value.
+	 * @param int    $count the repeated count for the previous character value.
 	 * @param string $symbols the counter symbols.
 	 * @return string
 	 */
 	private function add_previous_character_to_output( $previous, $count, $symbols ) {
-		$output = '';
-		if ( false !== $previous ) {
-			$output .= $previous;
-			if ( $count > 1 ) {
-				$output .= 2 === $count ? $previous : $symbols[ $count - 3 ];
-			}
+		$output = $previous;
+		if ( $count > 1 ) {
+			$output .= 2 === $count ? $previous : $symbols[ $count - 3 ];
 		}
 		return $output;
 	}
@@ -357,6 +372,8 @@ class MinString {
 		if ( $index < strlen( $additional_symbols ) ) {
 			return $additional_symbols[ $index ];
 		}
+
+		return '';
 	}
 
 	/**
@@ -458,7 +475,7 @@ class MinString {
 		}
 
 		$top = $this->top_pattern( $counts );
-		if ( $counts[ $top ] <= 2 ) {
+		if ( ! array_key_exists( $top, $counts ) || $counts[ $top ] <= 2 ) {
 			return;
 		}
 
@@ -473,10 +490,10 @@ class MinString {
 	 * @return string the pattern with the highest count.
 	 */
 	private function top_pattern( $counts ) {
-		$top = false;
+		$top = '';
 
 		foreach ( $counts as $key => $count ) {
-			if ( ! $top || $count > $counts[ $top ] ) {
+			if ( '' === $top || $count > $counts[ $top ] ) {
 				$top = $key;
 			}
 		}
@@ -525,7 +542,7 @@ class MinString {
 		$counts = array();
 		for ( $i = 0; $i < $to; ++ $i ) {
 			$pattern            = substr( $input, $i, 3 );
-			$counts[ $pattern ] = $this->pattern_matches( $pattern, $input )['number'];
+			$counts[ $pattern ] = $this->pattern_number( $pattern, $input );
 		}
 
 		$top = $this->top_pattern( $counts );
@@ -534,7 +551,7 @@ class MinString {
 		}
 
 		$first_index = strpos( $input, $top );
-		$matches     = $this->pattern_matches( $top, $input )['matches'];
+		$matches     = $this->pattern_matches( $top, $input );
 		$result      = substr( $input, 0, $first_index ) . $symbols[0] . $top;
 		$remaining   = substr( $input, $first_index + 3 );
 		foreach ( $matches as $rule_index ) {
@@ -554,9 +571,9 @@ class MinString {
 	 *
 	 * @param string $pattern the base pattern we're checking for.
 	 * @param string $input the input we're checking the pattern for.
-	 * @return array
+	 * @return void
 	 */
-	private function pattern_matches( $pattern, $input ) {
+	private function update_pattern_meta( $pattern, $input ) {
 		$permutations = $this->permutations( $pattern );
 		$to           = strlen( $input ) - 2;
 
@@ -574,10 +591,32 @@ class MinString {
 			}
 		}
 
-		return array(
-			'matches' => array_values( $matches ),
-			'number'  => $number,
-		);
+		$this->active_pattern_number  = $number;
+		$this->active_pattern_matches = array_values( $matches );
+	}
+
+	/**
+	 * Check a string for any pattern permutation matches.
+	 *
+	 * @param string $pattern the base pattern we're checking for.
+	 * @param string $input the input we're checking the pattern for.
+	 * @return array<int>
+	 */
+	private function pattern_matches( $pattern, $input ) {
+		$this->update_pattern_meta( $pattern, $input );
+		return $this->active_pattern_matches;
+	}
+
+	/**
+	 * Check a string for any pattern permutation matches.
+	 *
+	 * @param string $pattern the base pattern we're checking for.
+	 * @param string $input the input we're checking the pattern for.
+	 * @return int
+	 */
+	private function pattern_number( $pattern, $input ) {
+		$this->update_pattern_meta( $pattern, $input );
+		return $this->active_pattern_number;
 	}
 
 	/**
@@ -603,6 +642,7 @@ class MinString {
 			case 5:
 				return $pattern[2] . $pattern[1] . $pattern[0]; // ] flip.
 		}
+		return $pattern;
 	}
 
 	/**
@@ -676,7 +716,9 @@ class MinString {
 			return;
 		}
 
-		$flip = $top[1] . $top[0];
+		$first_index     = -1;
+		$first_character = '';
+		$flip            = $top[1] . $top[0];
 		for ( $char_index = 0; $char_index < $to; ++ $char_index ) {
 			$current = $input[ $char_index ] . $input[ $char_index + 1 ];
 			if ( $current === $top || $current === $flip ) {
@@ -740,7 +782,8 @@ class MinString {
 		$symbols = $this->two_character_permutations_symbols;
 		$length  = strlen( $symbols );
 
-		$first_index = -1;
+		$first_index     = -1;
+		$first_character = '';
 		for ( $rule_index = 0; $rule_index < $length; ++ $rule_index ) {
 			$index = strpos( $input, $symbols[ $rule_index ] );
 			if ( false !== $index && ( -1 === $first_index || $index < $first_index ) ) {

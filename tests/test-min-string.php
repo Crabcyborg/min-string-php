@@ -6,6 +6,20 @@
 class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 
 	/**
+	 * Call a private method for testing
+	 *
+	 * @param string $name the private function we're testing.
+	 * @param array  $args arguments to pass to function.
+	 */
+	private function call( $name, array $args ) {
+		$min    = new MinString( '' );
+		$class  = new \ReflectionClass( $min );
+		$method = $class->getMethod( $name );
+		$method->setAccessible( true );
+		return $method->invokeArgs( $min, $args );
+	}
+
+	/**
 	 * Test MinString::to_base_64
 	 */
 	public function test_to_base_64() {
@@ -223,6 +237,26 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 	 */
 	private function get_expected_three_character_permutations_value() {
 		return '"or0~v0-81$0g:\'fz$1M:X$7M:=v"U\'D\'"DT"j"IjX"m13fP"m34"g^Z$8g3Y$*gg;3!$*wg;"Ii!$*20;=Z$<403"*Z<=TY!803=XYt88;w6Y9)c06I1@1C0682\'z04o4\'x08g"Hg@w1"5*w@4@';
+	}
+
+	/**
+	 * Test MinString::pattern_matches
+	 */
+	public function test_pattern_matches() {
+		$pattern = '403';
+		$input   = '"or0~v0-81$0g:\'fz$1M:X$7M:=v"U\'D\'"DT"j"IjX"m13fP"m34"g^Z$8g3Y$*gg;3!$*wg;"Ii!$*20;=Z$403"*Z403=TY!803=XYt88;w6Y9043c06I1@1C0682\'z04o4\'x08g"Hg@w1"5*w@4@';
+		$matches = $this->call( 'pattern_matches', array( $pattern, $input ) );
+		$this->assertEquals( array( 0, 3 ), $matches );
+	}
+
+	/**
+	 * Test MinString::pattern_number
+	 */
+	public function test_pattern_number() {
+		$pattern = '403';
+		$input   = '"or0~v0-81$0g:\'fz$1M:X$7M:=v"U\'D\'"DT"j"IjX"m13fP"m34"g^Z$8g3Y$*gg;3!$*wg;"Ii!$*20;=Z$403"*Z403=TY!803=XYt88;w6Y9043c06I1@1C0682\'z04o4\'x08g"Hg@w1"5*w@4@';
+		$number  = $this->call( 'pattern_number', array( $pattern, $input ) );
+		$this->assertEquals( 3, $number );
 	}
 
 	/**
