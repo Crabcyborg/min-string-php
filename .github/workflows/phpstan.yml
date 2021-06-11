@@ -1,6 +1,6 @@
 on: [push]
 
-name: Static Code Analysis
+name: PHPStan Code Analysis
 jobs:
   phpstan:
     name: PHPStan

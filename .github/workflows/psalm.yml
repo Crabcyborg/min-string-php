@@ -1,6 +1,6 @@
 on: [push]
 
-name: Static Code Analysis
+name: Psalm Code Analysis
 jobs:
   psalm:
     name: Psalm
