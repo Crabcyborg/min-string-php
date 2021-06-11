@@ -1,10 +1,7 @@
 parameters:
 	ignoreErrors:
-		- '#Method MinString::char_at\(\) should return string but return statement is missing#'
-		- '#expects array\|string, string\|null given.#'
-		- '#expects int, int<0, max>\|false given#'
-		- '#expects string, string\|null given.#'
+		- '#expects (array|int|string)+#'
 		- '#might not be defined.#'
-		- '#return statement is missing.#'
-		- '#return type has no value type specified in iterable type array.#'
-		- '#Parameter \#3 \$length of function substr expects int\|null.#'
+	excludePaths:
+		- */vendor/*
+		- */tests/*
