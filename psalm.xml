@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="1"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <file name="class-minstring.php" />
+        <ignoreFiles>
+            <directory name="vendor" />
+        </ignoreFiles>
+    </projectFiles>
+    <issueHandlers>
+        <PossiblyFalseArgument>
+            <errorLevel type="suppress">
+                <file name="class-minstring.php" />
+            </errorLevel>
+        </PossiblyFalseArgument>
+        <PossiblyUndefinedVariable>
+            <errorLevel type="suppress">
+                <file name="class-minstring.php" />
+            </errorLevel>
+        </PossiblyUndefinedVariable>
+        <PossiblyFalseOperand>
+            <errorLevel type="suppress">
+                <file name="class-minstring.php" />
+            </errorLevel>
+        </PossiblyFalseOperand>
+        <MixedOperand>
+            <errorLevel type="suppress">
+                <file name="class-minstring.php" />
+            </errorLevel>
+        </MixedOperand>
+        <MixedArgument>
+            <errorLevel type="suppress">
+                <file name="class-minstring.php" />
+            </errorLevel>
+        </MixedArgument>
+    </issueHandlers>
+</psalm>

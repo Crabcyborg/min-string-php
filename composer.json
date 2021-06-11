@@ -1,0 +1,11 @@
+{
+    "name": "crabcyborg/min-string",
+    "description": "String minification library",
+    "authors": [
+        {
+            "name": "Mike Letellier",
+            "email": "mike@crabcyb.org"
+        }
+    ],
+    "require": {}
+}
