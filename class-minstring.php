@@ -493,8 +493,8 @@ class MinString {
 		$top = '';
 
 		foreach ( $counts as $key => $count ) {
-			if ( ! $top || $count > $counts[ $top ] ) {
-				$top = $key;
+			if ( '' === $top || $count > $counts[ $top ] ) {
+				$top = (string) $key;
 			}
 		}
 
