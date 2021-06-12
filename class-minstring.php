@@ -497,6 +497,7 @@ class MinString {
 		}
 
 		foreach ( $counts as $key => $count ) {
+			var_dump( $top );
 			if ( $count > $counts[ $top ] ) {
 				$top = "$key";
 			}
