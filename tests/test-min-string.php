@@ -302,4 +302,51 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 	public function test_decompress() {
 		$this->assert_before_and_after( $this->get_expected_two_character_permutations_value(), 'decompress', $this->get_raw_value() );
 	}
+
+	/**
+	 * Test how MinString works with RGB/HEX color values
+	 */
+	public function test_colors() {
+		$this->assert_before_and_after( '0,0,0', 'compress', '0*' );
+		$this->assert_before_and_after( '255,255,255', 'compress', '$*' );
+
+		$rgb = $this->hex_to_rgb( '#ffffff' );
+		$this->assert_before_and_after( $rgb, 'compress', '$*' );
+
+		$rgb = $this->hex_to_rgb( '#34cf9d' );
+		$this->assert_before_and_after( $rgb, 'compress', 'DsYQ' );
+
+		$tomato = '#ff6347';
+		$rgb    = $this->hex_to_rgb( $tomato );
+		$this->assert_before_and_after( $rgb, 'compress', 'hSf$' );
+		$this->assert_before_and_after( 'hSf$', 'decompress', '255,99,71' );
+
+		list( $r, $g, $b ) = explode( ',', '255,99,71' );
+		$hex               = $this->rgb_to_hex( $r, $g, $b );
+		$this->assertEquals( $tomato, $hex );
+		$this->assertEquals( '#FF6347', strtoupper( $hex ) );
+	}
+
+	/**
+	 * Convert #ffffff to 255,255,255.
+	 *
+	 * @param string $hex the #ffffff format hex color target.
+	 * @return string
+	 */
+	private function hex_to_rgb( $hex ) {
+		list( $r, $g, $b ) = sscanf( $hex, '#%02x%02x%02x' );
+		return "$r,$g,$b";
+	}
+
+	/**
+	 * Convert 255,255,255 to #ffffff
+	 *
+	 * @param string $r red.
+	 * @param string $g green.
+	 * @param string $b blue.
+	 * @return string
+	 */
+	private function rgb_to_hex( $r, $g, $b ) {
+		return sprintf( '#%02x%02x%02x', $r, $g, $b );
+	}
 }
