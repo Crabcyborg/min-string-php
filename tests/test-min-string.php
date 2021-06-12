@@ -325,6 +325,38 @@ class UnitTest_MinString extends \PHPUnit\Framework\TestCase {
 		$hex               = $this->rgb_to_hex( $r, $g, $b );
 		$this->assertEquals( $tomato, $hex );
 		$this->assertEquals( '#FF6347', strtoupper( $hex ) );
+
+		$common_colors = array(
+			'#FFFFFF', // white.
+			'#C0C0C0', // silver.
+			'#808080', // gray.
+			'#000000', // black.
+			'#FF0000', // red.
+			'#800000', // maroon.
+			'#FFFF00', // yellow.
+			'#808000', // olive.
+			'#00FF00', // lime.
+			'#008000', // green.
+			'#00FFFF', // aqua.
+			'#008080', // teal.
+			'#0000FF', // blue.
+			'#000080', // navy.
+			'#FF00FF', // fuchsia.
+			'#800080', // purple.
+		);
+		$length        = strlen( implode( ',', $common_colors ) );
+		$this->assertEquals( 127, $length );
+
+		$compressed = array();
+		foreach ( $common_colors as $hex ) {
+			$rgb = $this->hex_to_rgb( $hex );
+			$min = new MinString( $rgb );
+			$min->compress();
+			$compressed[] = $min->get_active_string();
+		}
+
+		$length = strlen( implode( ',', $compressed ) );
+		$this->assertEquals( 63, $length );
 	}
 
 	/**
