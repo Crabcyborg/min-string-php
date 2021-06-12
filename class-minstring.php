@@ -547,7 +547,7 @@ class MinString {
 		}
 
 		$top = $this->top_pattern( $counts );
-		if ( $counts[ $top ] <= 2 ) {
+		if ( ! array_key_exists( $top, $counts ) || $counts[ $top ] <= 2 ) {
 			return;
 		}
 
