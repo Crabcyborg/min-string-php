@@ -492,13 +492,17 @@ class MinString {
 	private function top_pattern( $counts ) {
 		$top = '';
 
+		if ( ! array_key_exists( '', $counts ) ) {
+			$counts[''] = -1;
+		}
+
 		foreach ( $counts as $key => $count ) {
-			if ( '' === $top || $count > $counts[ $top ] ) {
-				$top = (string) $key;
+			if ( $count > $counts[ $top ] ) {
+				$top = "$key";
 			}
 		}
 
-		return "$top";
+		return $top;
 	}
 
 	/**
