@@ -490,14 +490,10 @@ class MinString {
 	 * @return string the pattern with the highest count.
 	 */
 	private function top_pattern( $counts ) {
-		$top = '';
-
-		if ( ! array_key_exists( '', $counts ) ) {
-			$counts[''] = -1;
-		}
+		$top        = '';
+		$counts[''] = -1;
 
 		foreach ( $counts as $key => $count ) {
-			var_dump( $top );
 			if ( $count > $counts[ $top ] ) {
 				$top = "$key";
 			}
