@@ -418,31 +418,33 @@ class MinString {
 			$character       = $this->char_at( $character_index );
 			$search          = '"' . $character;
 
-			if ( false !== strpos( $input, $search ) ) {
-				$unsubbed_string = '';
-				$to              = strlen( $input );
-				for ( $string_index = 0; $string_index < $to; ++ $string_index ) {
-					if ( $string_index + 1 < $input_length && '"' === $input[ $string_index ] && $character === $input[ $string_index + 1 ] ) {
-						$pattern        = $other_patterns[ $index ];
-						$pattern_length = strlen( $pattern );
-						$i              = 2;
-						for ( $j = 0; $j < $pattern_length; ++ $j ) {
-							if ( ' ' !== $pattern[ $j ] ) {
-								$unsubbed_string .= $pattern[ $j ];
-							} else {
-								$unsubbed_string .= $input[ $string_index + $i ];
-								++ $i;
-							}
-						}
-
-						$string_index += $pattern_length - 2;
-					} else {
-						$unsubbed_string .= $input[ $string_index ];
-					}
-				}
-
-				$input = $unsubbed_string;
+			if ( false === strpos( $input, $search ) ) {
+				continue;
 			}
+
+			$unsubbed_string = '';
+			$to              = strlen( $input );
+			for ( $string_index = 0; $string_index < $to; ++ $string_index ) {
+				if ( $string_index + 1 < $input_length && '"' === $input[ $string_index ] && $character === $input[ $string_index + 1 ] ) {
+					$pattern        = $other_patterns[ $index ];
+					$pattern_length = strlen( $pattern );
+					$i              = 2;
+					for ( $j = 0; $j < $pattern_length; ++ $j ) {
+						if ( ' ' !== $pattern[ $j ] ) {
+							$unsubbed_string .= $pattern[ $j ];
+						} else {
+							$unsubbed_string .= $input[ $string_index + $i ];
+							++ $i;
+						}
+					}
+
+					$string_index += $pattern_length - 2;
+				} else {
+					$unsubbed_string .= $input[ $string_index ];
+				}
+			}
+
+			$input = $unsubbed_string;
 		}
 
 		$this->string = $input;
