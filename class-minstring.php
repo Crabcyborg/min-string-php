@@ -479,8 +479,23 @@ class MinString {
 			return;
 		}
 
-		$first_index  = strpos( $input, $top );
-		$this->string = substr( $input, 0, $first_index ) . $character . $top . str_replace( $top, $character, substr( $input, $first_index + 2 ) );
+		$first_index = strpos( $input, $top );
+		if ( false === $first_index ) {
+			return;
+		}
+
+		$front = substr( $input, 0, $first_index );
+		if ( ! is_string( $front ) ) {
+			return;
+		}
+
+		$end = substr( $input, $first_index + 2 );
+		if ( ! is_string( $end ) ) {
+			return;
+		}
+
+		$end          = str_replace( $top, $character, $end );
+		$this->string = $front . $character . $top . $end;
 	}
 
 	/**
@@ -542,8 +557,10 @@ class MinString {
 
 		$counts = array();
 		for ( $i = 0; $i < $to; ++ $i ) {
-			$pattern            = substr( $input, $i, 3 );
-			$counts[ $pattern ] = $this->pattern_number( $pattern, $input );
+			$pattern = substr( $input, $i, 3 );
+			if ( is_string( $pattern ) ) {
+				$counts[ $pattern ] = $this->pattern_number( $pattern, $input );
+			}
 		}
 
 		$top = $this->top_pattern( $counts );
@@ -552,9 +569,19 @@ class MinString {
 		}
 
 		$first_index = strpos( $input, $top );
-		$matches     = $this->pattern_matches( $top, $input );
-		$result      = substr( $input, 0, $first_index ) . $symbols[0] . $top;
-		$remaining   = substr( $input, $first_index + 3 );
+		if ( false === $first_index ) {
+			return;
+		}
+
+		$matches = $this->pattern_matches( $top, $input );
+		$result  = substr( $input, 0, $first_index );
+
+		if ( ! is_string( $result ) ) {
+			return;
+		}
+
+		$result   .= $symbols[0] . $top;
+		$remaining = substr( $input, $first_index + 3 );
 		foreach ( $matches as $rule_index ) {
 			$comparison = $this->rule_adjustment( $top, $rule_index );
 			$remaining  = str_replace( $comparison, $symbols[ $rule_index ], $remaining );
@@ -719,6 +746,7 @@ class MinString {
 
 		$first_index     = -1;
 		$first_character = '';
+		$first_pattern   = '';
 		$flip            = $top[1] . $top[0];
 		for ( $char_index = 0; $char_index < $to; ++ $char_index ) {
 			$current = $input[ $char_index ] . $input[ $char_index + 1 ];
@@ -746,11 +774,24 @@ class MinString {
 			}
 		}
 
-		$result     = substr( $input, 0, $first_index ) . $first_character . $first_pattern;
-		$remaining  = substr( $input, $first_index + strlen( $first_pattern ) );
+		$front = substr( $input, 0, $first_index );
+		if ( ! is_string( $front ) ) {
+			return;
+		}
+
+		$result    = $front . $first_character . $first_pattern;
+		$remaining = substr( $input, $first_index + strlen( $first_pattern ) );
+		if ( ! is_string( $remaining ) ) {
+			return;
+		}
+
 		$characters = str_split( $symbols );
 
 		foreach ( $characters as $character_index => $c ) {
+			if ( ! is_string( $remaining ) ) {
+				return;
+			}
+
 			switch ( $character_index ) {
 				case 0:
 					$remaining = str_replace( $top, $c, $remaining );
@@ -819,6 +860,10 @@ class MinString {
 
 		$remaining = substr( $input, $first_index + $step );
 		for ( $char_index = $length - 1; $char_index >= 0; -- $char_index ) {
+			if ( ! is_string( $remaining ) ) {
+				return;
+			}
+
 			$c = $symbols[ $char_index ];
 
 			if ( false !== strpos( $remaining, $c ) ) {

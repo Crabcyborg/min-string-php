@@ -1,7 +1,4 @@
 parameters:
-	ignoreErrors:
-		- '#expects (array|int|string)+#'
-		- '#might not be defined.#'
 	excludePaths:
 		- */vendor/*
 		- */tests/*
