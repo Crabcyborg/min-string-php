@@ -12,31 +12,4 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
-    <issueHandlers>
-        <PossiblyFalseArgument>
-            <errorLevel type="suppress">
-                <file name="class-minstring.php" />
-            </errorLevel>
-        </PossiblyFalseArgument>
-        <PossiblyUndefinedVariable>
-            <errorLevel type="suppress">
-                <file name="class-minstring.php" />
-            </errorLevel>
-        </PossiblyUndefinedVariable>
-        <PossiblyFalseOperand>
-            <errorLevel type="suppress">
-                <file name="class-minstring.php" />
-            </errorLevel>
-        </PossiblyFalseOperand>
-        <MixedOperand>
-            <errorLevel type="suppress">
-                <file name="class-minstring.php" />
-            </errorLevel>
-        </MixedOperand>
-        <MixedArgument>
-            <errorLevel type="suppress">
-                <file name="class-minstring.php" />
-            </errorLevel>
-        </MixedArgument>
-    </issueHandlers>
 </psalm>
